@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface NavItem {
   label: string;
@@ -13,10 +14,10 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ 
   logo = 'SmartApp',
   navItems = [
-    { label: 'Home', href: '#' },
-    { label: 'Explore', href: '#' },
-    { label: 'How it works', href: '#' },
-    { label: 'App', href: '#' }
+    { label: 'Home', to: '/' },
+    { label: 'Explore', to: '/#explore' },
+    { label: 'How it works', to: '/#howitworks' },
+    { label: 'App', to: '/#app' }
   ] 
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -26,7 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <nav className="bg-white shadow-md py-4 px-6 relative">
+    <nav className="shadow-md py-4 px-6 fixed backdrop-blur-xl w-full bg-white/70">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Hamburger menu for mobile - now on the left */}
         <div className="md:hidden">
@@ -68,33 +69,39 @@ const Navbar: React.FC<NavbarProps> = ({
         {/* Navigation tabs - desktop with underline animation */}
         <div className="hidden md:flex items-center space-x-8">
           {navItems.map((item, index) => (
-            <a 
+            <Link 
               key={index}
-              href={item.href} 
+              to={item.to} 
               className="text-slate-800 font-medium relative group"
             >
               {item.label}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black group-hover:w-full transition-all duration-300"></span>
-            </a>
+            </Link>
           ))}
         </div>
 
 
         {/* Auth buttons - desktop */}
         <div className="hidden md:flex items-center space-x-4">
-          <button className="px-4 py-2 text-blue-500 hover:bg-gray-50 font-medium border border-blue-500 cursor-pointer rounded-md">
-            Register
-          </button>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 font-medium cursor-pointer">
-            Login
-          </button>
+            <Link to={'/register'}>
+                <button className="px-4 py-2 text-blue-500 hover:bg-gray-50 font-medium border border-blue-500 cursor-pointer rounded-md">
+                    Register
+                </button>
+            </Link>
+            <Link to={'/login'}>
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 font-medium cursor-pointer">
+                    Login
+                </button>  
+            </Link>
         </div>
 
         {/* Mobile auth buttons (only visible on mobile) */}
         <div className="md:hidden flex items-center space-x-4">
-          <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 font-medium">
-            Login
-          </button>
+        <Link to={'/login'}>
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 font-medium cursor-pointer">
+                    Login
+                </button>  
+            </Link>
         </div>
       </div>
 
@@ -117,13 +124,13 @@ const Navbar: React.FC<NavbarProps> = ({
           
           <div className="flex flex-col space-y-6">
             {navItems.map((item, index) => (
-              <a 
+              <Link 
                 key={index}
-                href={item.href} 
+                to={item.to} 
                 className="text-gray-700 font-medium"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
