@@ -20,7 +20,7 @@ const Login = () => {
               <input type="password" placeholder="Password" className="peer px-10 py-2 w-full rounded-xl border border-gray-300 focus:outline-none focus:border-blue-500 transition placeholder:text-slate-500 placeholder:text-sm focus:placeholder-transparent"/>
               <CiLock className="peer-focus:text-blue-600 absolute left-4 top-3.5 text-slate-500"/>
             </label>
-            <button className="rounded-lg px-4 py-2 w-full bg-blue-500 hover:bg-blue-700 text-white font-semibold cursor-pointer transition">Login</button>
+            <button className="rounded-lg px-4 py-2 w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold cursor-pointer transition">Login</button>
             <p className="w-full">
               Not a member?
               <Link to={"/register"}>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Logo from '/parkingicon.png'
 
 interface NavItem {
   label: string;
@@ -12,7 +13,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ 
-  logo = 'SmartApp',
+  logo = 'Parko',
   navItems = [
     { label: 'Home', to: '/' },
     { label: 'Explore', to: '/#explore' },
@@ -27,7 +28,7 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <nav className="shadow-md py-4 px-6 fixed backdrop-blur-xl w-full bg-white/70">
+    <nav className="shadow-sm fixed z-50 py-4 px-6 w-full bg-transparent backdrop-blur-lg h-[4.5rem]">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Hamburger menu for mobile - now on the left */}
         <div className="md:hidden">
@@ -62,9 +63,14 @@ const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Logo */}
-        <div className="flex-shrink-0 font-bold text-xl text-blue-600">
-          {logo}
+        <Link to={'/'}>
+        <div className="flex-shrink-0 flex justify-center items-center gap-2 font-bold text-xl cursor-pointer" >
+          <div className='h-7 -translate-y-1 [filter:sepia(100%)_hue-rotate(190deg)_saturate(800%)]'>
+            <img src={Logo} alt={"logo"} className='h-full object-cover ' />
+          </div>
+          <p>{logo}</p>
         </div>
+        </Link>
 
         {/* Navigation tabs - desktop with underline animation */}
         <div className="hidden md:flex items-center space-x-8">
@@ -84,12 +90,12 @@ const Navbar: React.FC<NavbarProps> = ({
         {/* Auth buttons - desktop */}
         <div className="hidden md:flex items-center space-x-4">
             <Link to={'/register'}>
-                <button className="px-4 py-2 text-blue-500 hover:bg-gray-50 font-medium border border-blue-500 cursor-pointer rounded-md">
+                <button className="px-4 py-2 text-blue-700 hover:bg-gray-50 font-medium border border-blue-700 cursor-pointer rounded-md">
                     Register
                 </button>
             </Link>
             <Link to={'/login'}>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 font-medium cursor-pointer">
+                <button className="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition duration-300 font-medium cursor-pointer">
                     Login
                 </button>  
             </Link>
@@ -98,7 +104,7 @@ const Navbar: React.FC<NavbarProps> = ({
         {/* Mobile auth buttons (only visible on mobile) */}
         <div className="md:hidden flex items-center space-x-4">
         <Link to={'/login'}>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 font-medium cursor-pointer">
+                <button className="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition duration-300 font-medium cursor-pointer">
                     Login
                 </button>  
             </Link>
@@ -110,8 +116,15 @@ const Navbar: React.FC<NavbarProps> = ({
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="p-6">
-          <div className="flex justify-between items-center mb-8">
-            <span className="font-bold text-xl text-blue-600">{logo}</span>
+          <div className="flex justify-between items-center mb-8 w-full">
+            <Link to={'/'}>
+            <div className="flex-shrink-0 flex justify-between items-center gap-2 font-bold text-xl cursor-pointer" >
+              <div className='h-7 -translate-y-1 [filter:sepia(100%)_hue-rotate(190deg)_saturate(800%)]'>
+                <img src={Logo} alt={"logo"} className='h-full object-cover ' />
+              </div>
+              <p>{logo}</p>
+            </div>
+            </Link>
             <button 
               onClick={toggleSidebar}
               className="text-gray-600 hover:text-gray-900 focus:outline-none"

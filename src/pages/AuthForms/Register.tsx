@@ -29,7 +29,7 @@ const Register = () => {
               <input type="checkbox"/>
               <p className="text-sm">Register as Parking Space Owner</p>
             </label>
-            <button className="rounded-lg px-4 py-2 w-full bg-blue-500 hover:bg-blue-700 text-white font-semibold cursor-pointer transition">Login</button>
+            <button className="rounded-lg px-4 py-2 w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold cursor-pointer transition">Login</button>
             <p className="w-full">
               Already a member?
               <Link to={"/login"}>
