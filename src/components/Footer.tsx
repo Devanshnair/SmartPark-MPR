@@ -8,9 +8,9 @@ const Footer: React.FC<FooterProps> = ({ companyName = 'Your Company' }) => {
   return (
     <footer className="bg-gray-950 text-gray-300">
       <div className="max-w-7xl mx-auto py-12 px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
           {/* Company info */}
-          <div className="col-span-1">
+          <div className="col-span-2 sm:col-span-3 md:col-span-1">
             <h3 className="text-white text-lg font-bold mb-4">{companyName}</h3>
             <p className="mb-4 text-sm">
               We're dedicated to providing the best experience for our users.
@@ -36,7 +36,7 @@ const Footer: React.FC<FooterProps> = ({ companyName = 'Your Company' }) => {
           </div>
 
           {/* Quick links */}
-          <div className="col-span-1">
+          <div className="col-span-1 max-sm:hidden">
             <h3 className="text-white text-lg font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li><a href="#" className="hover:text-white transition duration-300">Home</a></li>

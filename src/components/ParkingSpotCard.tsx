@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, MapPin, Clock, Car, ArrowRight } from "lucide-react";
+import { Star, MapPin, Clock, Car, ArrowRight, MapPinCheck } from "lucide-react";
 import { ParkingSpot } from "@/data/parking-spots";
 import { motion } from "framer-motion";
 
@@ -23,7 +23,7 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
   if (layout === "horizontal") {
     return (
       <div
-        onClick={() => navigate(`/parking-spots/${spot.id}`)}
+        
         className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer overflow-hidden p-4"
       >
         <div className="flex gap-4">
@@ -44,18 +44,18 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
             </div>
 
             {/* Name */}
-            <h3 className="font-semibold text-gray-900">{spot.name}</h3>
+            <h3 className="font-semibold text-gray-900 max-[500px]:text-sm">{spot.name}</h3>
 
             {/* Address */}
-            <p className="text-gray-500 text-sm mb-2">{truncateAddress(spot.address || "")}</p>
-            <div className="flex items-center justify-between gap-8 mb-2 w-fit text-gray-500">
+            <p className="text-gray-500 text-sm mb-2 max-[500px]:hidden">{truncateAddress(spot.address || "")}</p>
+            <div className="flex items-center justify-between max-[500px]:gap-4 gap-8 mb-2 w-fit text-gray-500 max-[500px]:text-sm">
                 <div className="flex items-center text-muted-foreground">
                     <MapPin className="w-4 h-4 mr-1" />
                     <span className="text-sm">{spot.distance}</span>
                 </div>
                 <div className="flex items-center text-muted-foreground">
                     <Clock className="w-4 h-4 mr-1" />
-                    <span className="text-sm">{spot.time} mins</span>
+                    <span className="text-sm">{spot.time}</span>
                 </div>
             </div>
           </div>
@@ -72,16 +72,19 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
         </div>
 
         {/* Bottom Row */}
-        <div className="flex items-center font-semibold justify-between pt-3">
-          <div className="flex justify-center items-center gap-10">
+        <div className="flex items-center font-semibold justify-between pt-3 ">
+          <div className="flex justify-center items-center gap-10 max-[500px]:text-sm">
             <span className="">₹{spot.price}/hr</span>
             <span className="flex justify-center items-center gap-1 text-sm">
               <Car className="h-5 w-5" /> {spot.availableSlots} available
             </span>
           </div>
-          <button>
+          <button className="flex justify-center items-center gap-6">
+          {spot.viewOnMap && (
+              <MapPinCheck  className="text-slate-800 hover:text-red-600 cursor-pointer"/>
+            )}
           <motion.button
-            className="relative px-1 py-1 h-9 w-9 bg-blue-700 text-white rounded-full overflow-hidden flex justify-center items-center gap-2 cursor-pointer"
+            className="relative px-1 py-1 max-[500px]:size-8 size-9 bg-blue-700 text-white rounded-full overflow-hidden flex justify-center items-center gap-2 cursor-pointer"
             whileHover="hover"
             initial="initial"
             >
@@ -96,7 +99,7 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
                 ease: "easeInOut"
               }}
             >
-              <ArrowRight className="w-6 h-6" />
+              <ArrowRight className="max-[500px]:size-5 size-6"  onClick={() => navigate(`/parking-spots/${spot.id}`)}/>
             </motion.div>
           </motion.button>
           </button>
@@ -146,7 +149,7 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between p-4 pt-0">
-        <Button variant="default" className="w-[48%]">
+        <Button variant="default" className="w-[48%]" onClick={() => navigate(`/parking-spots/${spot.id}`)}>
           Book Now
         </Button>
         <Button variant="outline" className="w-[48%]">

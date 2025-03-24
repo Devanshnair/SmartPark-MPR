@@ -1,4 +1,4 @@
-interface ParkingSpot {
+export interface ParkingSpot {
     id: string;
     name: string;
     imageUrl: string;
@@ -10,6 +10,7 @@ interface ParkingSpot {
     availableSlots: number;
     availableTypes?: string[];
     reviews?: number;
+    viewOnMap?: boolean;
   }
 
 export const PARKING_SPOTS: ParkingSpot[] = [

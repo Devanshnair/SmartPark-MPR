@@ -59,8 +59,8 @@ const HowItWorks: React.FC = () => {
           className="text-center mb-16"
           style={{ opacity: titleOpacity, y: titleY }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">We Make a Difference</h2>
-          <p className="text-lg text-gray-500 max-w-3xl mx-auto">
+          <h2 className="max-[500px]:text-2xl text-3xl md:text-5xl font-bold mb-4">We Make a Difference</h2>
+          <p className="max-[500px]:text-sm text-base text-gray-500 max-w-3xl mx-auto">
             Parko puts the power to park in your hands. Whether you're looking for a spot now or reserving a spot for 
             later, Parko has you covered.
           </p>
@@ -69,19 +69,21 @@ const HowItWorks: React.FC = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <button className="bg-orange-400 hover:bg-orange-400 text-black font-medium py-3 px-8 transition-colors uppercase text-sm tracking-wide">
+            <button className="bg-orange-400 hover:bg-orange-400 text-black font-medium max-[500px]:py-[10px] py-3 max-[500px]:px-5 px-8 transition-colors uppercase max-[500px]:text-xs text-sm tracking-wide">
               HOW IT WORKS
             </button>
           </motion.div>
         </motion.div>
         
-        <div className="flex flex-col justify-evenly md:flex-row gap-6 md:gap-4 items-center">
+        <div className="lg:flex justify-center gap-6 md:gap-4 items-center
+                max-[500px]:flex max-[500px]:flex-col min-[500px]:grid min-[500px]:grid-cols-2 place-items-center lg:flex-row">
+
           {steps.map((step, index) => (
             <StepCard 
               key={step.number}
               step={step}
               isHovered={hoveredStep === index}
-              onHover={() => setHoveredStep(index)}
+              onHover={() =>{ window.innerWidth > 768 ? setHoveredStep(index) : setHoveredStep(null)}}
               index={index}
             />
           ))}
@@ -103,84 +105,40 @@ const StepCard: React.FC<StepCardProps> = ({ step, isHovered, onHover, index }) 
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <div className={`relative group transition-all duration-500 ease-out ${isHovered ? 'md:w-[27%] md:h-[400px]' : 'md:w-[20%] md:h-[320px]'}`}>
+    <div className={`relative group transition-all duration-500 ease-out w-full ${isHovered ? 'md:w-[100%] lg:w-[27%] sm:h-[400px]' : 'md:w-[90%] lg:w-[20%] h-[320px]'}`}>
       <motion.div
-      ref={ref}
-      className={`bg-white border border-black overflow-hidden flex flex-col relative z-10 w-full h-full`}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      onMouseEnter={onHover}
-    >
-      <div className="p-6 flex flex-col h-full">
-        <div className="mb-4">
-          <div className="bg-orange-400 w-12 h-12 flex items-center justify-center text-2xl font-bold mb-4">
-            {step.number}
+        ref={ref}
+        className="bg-white border border-black overflow-hidden flex flex-col relative z-10 w-full h-full"
+        initial={{ 
+          opacity: 0, 
+          y: 50, 
+          x: 0, // Default no x animation
+          ...(window.innerWidth <= 1024 && {  // Only apply x animation for lg and below
+            x: index % 2 === 0 ? -50 : +50, // Even index: x=50, Odd index: x=-50
+            y: 0 // Disable y animation
+          })
+        }}
+        animate={isInView ? { opacity: 1, x: 0, y: 0 } : {}}
+        transition={{ duration: 0.5 }}
+        onMouseEnter={onHover}
+      >
+        <div className="p-6 flex flex-col h-full">
+          <div className="mb-4">
+            <div className="bg-orange-400 w-12 h-12 flex items-center justify-center text-xl sm:text-2xl font-bold mb-4">
+              {step.number}
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold">{step.title}</h3>
           </div>
-          <h3 className="text-xl font-bold">{step.title}</h3>
-        </div>
-        
-        <div className="relative flex-grow mt-4 overflow-hidden">
-          <AnimatePresence>
-            {!isHovered ? (
-              <motion.div
-                key="normal"
-                className="absolute inset-0"
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <img 
-                  src={step.imageUrl} 
-                  alt={step.title}
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="hovered"
-                className="absolute inset-0"
-                initial={{ clipPath: "polygon(0 0, 0 0, 0 0)" }}
-                animate={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)" }}
-                transition={{ 
-                  duration: 0.6,
-                  ease: [0.22, 1, 0.36, 1]
-                }}
-              >
-                <motion.div
-                  className="w-full h-full origin-top-left"
-                  initial={{ scale: 1 }}
-                  animate={{ scale: 1.1 }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
-                >
-                  <img 
-                    src={step.imageUrl} 
-                    alt={step.title}
-                    className="w-full h-full object-cover"
-                  />
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
-          {/* Diagonal flip overlay */}
-          <AnimatePresence mode="wait">
-            {isHovered ? (
-              // Hover State: Peeling Effect
-              <motion.div
-                key="hovered"
-                className="absolute inset-0"
-                initial={{ clipPath: "polygon(100% 100%, 100% 100%, 100% 100%)" }}
-                animate={{ clipPath: "polygon(141.42% -120%, -120% 141.42%, 141.42% 141.42%)" }}
-                exit={{ clipPath: "polygon(100% 100%, 100% 100%, 100% 100%)" }} // Reverse animation
-                transition={{ duration: 0.7, ease: [0.645, 0.045, 0.355, 1] }}
-              >
+          <div className="relative flex-grow mt-4 overflow-hidden">
+            <AnimatePresence>
+              {!isHovered ? (
                 <motion.div
-                  className="w-full h-full origin-bottom-left"
-                  initial={{ scale: 1 }}
-                  animate={{ scale: 1.1 }}
-                  exit={{ scale: 1 }} // Reverse animation for scaling
-                  transition={{ duration: 1, ease: "easeOut" }}
+                  key="normal"
+                  className="absolute inset-0"
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <img 
                     src={step.imageUrl} 
@@ -188,31 +146,81 @@ const StepCard: React.FC<StepCardProps> = ({ step, isHovered, onHover, index }) 
                     className="w-full h-full object-cover"
                   />
                 </motion.div>
-              </motion.div>
-            ) : (
-              // Default (Normal) State
-              <motion.div
-                key="normal"
-                className="absolute inset-0"
-                initial={{ opacity: 0, clipPath: "polygon(100% 100%, 100% 100%, 100% 100%)" }}
-                animate={{ opacity: 1, clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
-                exit={{ opacity: 0, clipPath: "polygon(100% 100%, 100% 100%, 100% 100%)" }} // Reverse animation
-                transition={{ duration: 0.5, ease: "easeOut" }}
-              >
-                <img 
-                  src={step.imageUrl} 
-                  alt={step.title}
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+              ) : (
+                <motion.div
+                  key="hovered"
+                  className="absolute inset-0"
+                  initial={{ clipPath: "polygon(0 0, 0 0, 0 0)" }}
+                  animate={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)" }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <motion.div
+                    className="w-full h-full origin-top-left"
+                    initial={{ scale: 1 }}
+                    animate={{ scale: 1.1 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                  >
+                    <img 
+                      src={step.imageUrl} 
+                      alt={step.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Diagonal flip overlay */}
+            <AnimatePresence mode="wait">
+              {isHovered ? (
+                // Hover State: Peeling Effect
+                <motion.div
+                  key="hovered"
+                  className="absolute inset-0"
+                  initial={{ clipPath: "polygon(100% 100%, 100% 100%, 100% 100%)" }}
+                  animate={{ clipPath: "polygon(141.42% -120%, -120% 141.42%, 141.42% 141.42%)" }}
+                  exit={{ clipPath: "polygon(100% 100%, 100% 100%, 100% 100%)" }} // Reverse animation
+                  transition={{ duration: 0.7, ease: [0.645, 0.045, 0.355, 1] }}
+                >
+                  <motion.div
+                    className="w-full h-full origin-bottom-left"
+                    initial={{ scale: 1 }}
+                    animate={{ scale: 1.1 }}
+                    exit={{ scale: 1 }} // Reverse animation for scaling
+                    transition={{ duration: 1, ease: "easeOut" }}
+                  >
+                    <img 
+                      src={step.imageUrl} 
+                      alt={step.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.div>
+                </motion.div>
+              ) : (
+                // Default (Normal) State
+                <motion.div
+                  key="normal"
+                  className="absolute inset-0"
+                  initial={{ opacity: 0, clipPath: "polygon(100% 100%, 100% 100%, 100% 100%)" }}
+                  animate={{ opacity: 1, clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
+                  exit={{ opacity: 0, clipPath: "polygon(100% 100%, 100% 100%, 100% 100%)" }} // Reverse animation
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                >
+                  <img 
+                    src={step.imageUrl} 
+                    alt={step.title}
+                    className="w-full h-full object-cover"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-      </div>
-    </motion.div>
-    <div className='h-full w-full absolute top-1 -right-1 bg-black z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300'/>
+      </motion.div>
+      <div className='h-full w-full absolute top-1 -right-1 bg-black z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 max-md:hidden'/>
     </div>
   );
 };
+
 
 export default HowItWorks;

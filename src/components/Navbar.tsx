@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '/parkingicon.png'
 
@@ -27,8 +27,21 @@ const Navbar: React.FC<NavbarProps> = ({
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
+  
+
   return (
-    <nav className="shadow-sm fixed z-50 py-4 px-6 w-full bg-transparent backdrop-blur-lg h-[4.5rem]">
+    <nav className="shadow-sm fixed z-50 py-4 px-6 w-full max-w-screen bg-transparent backdrop-blur-lg h-[4.5rem]">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Hamburger menu for mobile - now on the left */}
         <div className="md:hidden">
@@ -112,10 +125,10 @@ const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Mobile sidebar - opens from left to right */}
-      <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${
+      <div className={`fixed top-0 left-0 h-full w-2/3 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
-        <div className="p-6">
+        <div className="p-6 bg-white h-screen">
           <div className="flex justify-between items-center mb-8 w-full">
             <Link to={'/'}>
             <div className="flex-shrink-0 flex justify-between items-center gap-2 font-bold text-xl cursor-pointer" >
