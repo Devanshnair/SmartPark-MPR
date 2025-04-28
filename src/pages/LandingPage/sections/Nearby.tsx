@@ -2,44 +2,61 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { APIProvider, Map, Marker, InfoWindow, useApiIsLoaded } from '@vis.gl/react-google-maps';
 import ParkingSpotCard from '@/components/ParkingSpotCard';
-import { PARKING_SPOTS } from '@/data/parking-spots';
-
-interface ParkingSpot {
-  id: string;
-  name: string;
-  address: string;
-  distance: string;
-  spots: number;
-  price: string;
-  rating: number;
-  lat: number;
-  lng: number;
-}
+import { PARKING_SPOTS, ParkingSpot } from '@/data/parking-spots';
+import { Link } from 'react-router-dom';
+import { BASE_URL } from '@/App';
 
 const Nearby: React.FC = () => {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [infoWindowOpen, setInfoWindowOpen] = useState<boolean>(false);
   const [isMapReady, setIsMapReady] = useState(false);
+  const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>(PARKING_SPOTS);
+  const [isLoading, setIsLoading] = useState(true);
   const apiIsLoaded = useApiIsLoaded();
 
-    // Handle marker click to toggle InfoWindow
-    const handleMarkerClick = useCallback(() => {
-      setInfoWindowOpen((prev) => !prev);
-    }, []);
+  // Handle marker click to toggle InfoWindow
+  const handleMarkerClick = useCallback(() => {
+    setInfoWindowOpen((prev) => !prev);
+  }, []);
 
-
-  // Get current location
+  // Get current location and fetch nearby spots
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation({ lat: latitude, lng: longitude });
-          console.error(`lat: ${latitude}, lng: ${longitude}`);
+          setIsLoading(true);
+
+          try {
+            const response = await fetch(`${BASE_URL}/reservation/parking-area/nearby/?user-lat=${latitude}&user-long=${longitude}`, {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                "ngrok-skip-browser-warning": "true",
+              }
+            });
+
+            if (response.ok) {
+              const data: ParkingSpot[] = await response.json();
+              setParkingSpots(data);
+            } else {
+              setParkingSpots(PARKING_SPOTS);
+            }
+          } catch (error) {
+            console.error('Error fetching nearby parking spots:', error);
+            setParkingSpots(PARKING_SPOTS);
+          } finally {
+            setIsLoading(false);
+            console.log(parkingSpots);
+            
+          }
         },
         (error) => {
           console.error('Error getting location:', error);
+          setParkingSpots(PARKING_SPOTS);
+          setIsLoading(false);
         }
       );
     }
@@ -51,8 +68,8 @@ const Nearby: React.FC = () => {
       if (userLocation && apiIsLoaded && window.google) {
         try {
           const geocoder = new window.google.maps.Geocoder();
-          const response = await geocoder.geocode({ 
-            location: userLocation 
+          const response = await geocoder.geocode({
+            location: userLocation,
           });
 
           if (response.results?.[0]) {
@@ -92,23 +109,47 @@ const Nearby: React.FC = () => {
         <div className="flex flex-col-reverse md:flex-row gap-6 border-none">
           {/* Parking Spots Listing (Left Column - 3/5 width) */}
           <div className="md:w-3/5 space-y-4 md:px-4">
-            {PARKING_SPOTS.slice(0, 3).map((spot, index) => (
-              <motion.div
-                initial={{
-                  opacity: 0,
-                  x: -20,
-                  ...(window.innerWidth <= 1024 && {
-                    x: index % 2 === 0 ? -50 : +50,
-                  }),
-                }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true, amount: 0.8 }}
-                key={spot.id}
-              >
-                <ParkingSpotCard spot={spot} layout="horizontal" />
-              </motion.div>
-            ))}
+            {isLoading ? (
+              <div className="w-full h-[300px] flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                  <p className="text-gray-600">Loading nearby parking spots...</p>
+                </div>
+              </div>
+            ) : (
+              parkingSpots.slice(0, 3).map((spot, index) => (
+                <Link to={`/parkingprofile/${spot.id}`} key={spot.id}>
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      x: -20,
+                      ...(window.innerWidth <= 1024 && {
+                        x: index % 2 === 0 ? -50 : +50,
+                      }),
+                    }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                    viewport={{ once: true, amount: 0.8 }}
+                  >
+                    <ParkingSpotCard
+                      spot={{
+                        id: spot.id.toString(),
+                        name: spot.parking_user.parking_name,
+                        address: spot.parking_user.address,
+                        distance: `${(spot.distance).toFixed(1)} km`,
+                        spots: spot.available_slots,
+                        price: spot.parking_user.hourlyRate.toString(),
+                        rating: spot.parking_user.rating,
+                        imageUrl: spot.parking_user.image_url || 'default-parking-image.jpg',
+                        availableTypes: spot.parking_user.availableTypes.split(','),
+                        time: `${index == 0 ? '7 mins' : index == 1 ? '12 mins' : '14 mins'}` // This could be calculated based on distance
+                      }}
+                      layout="horizontal"
+                    />
+                  </motion.div>
+                </Link>
+              ))
+            )}
           </div>
 
           {/* Google Maps (Right Column - 2/5 width) */}
@@ -129,16 +170,13 @@ const Nearby: React.FC = () => {
               >
                 {userLocation && (
                   <>
-                    <Marker 
-                      position={userLocation} 
-                      onClick={handleMarkerClick}
-                    />
+                    <Marker position={userLocation} onClick={handleMarkerClick} />
                     {infoWindowOpen && (
-                      <InfoWindow 
-                        position={userLocation} 
+                      <InfoWindow
+                        position={userLocation}
                         onCloseClick={handleMarkerClick}
                         options={{
-                          pixelOffset: new window.google.maps.Size(0, -30)
+                          pixelOffset: new window.google.maps.Size(0, -30),
                         }}
                       >
                         <div className="p-2">

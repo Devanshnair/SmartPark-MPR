@@ -51,6 +51,7 @@ const HowItWorks: React.FC = () => {
   return (
     <div 
       ref={sectionRef} 
+      id="howitworks"
       className="py-16 md:py-24 bg-slate-50"
       onMouseLeave={handleMouseLeave}
     >

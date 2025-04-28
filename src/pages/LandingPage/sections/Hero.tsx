@@ -118,7 +118,7 @@ const Hero = () => {
   
 
   return (
-    <section className="bg-slate-50 pt-[4.5rem] relative ">
+    <section id="home" className="bg-slate-50 pt-[4.5rem] relative ">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-row items-center py-10 gap-10 relative">
           <motion.div

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import Logo from '/parkingicon.png'
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { IoPersonCircleSharp } from "react-icons/io5";
+import { Calendar, LogOut } from "lucide-react";
+import Logo from '/parkingicon.png';
+import { BASE_URL } from '@/App';
 
 interface NavItem {
   label: string;
@@ -15,17 +18,89 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ 
   logo = 'Parko',
   navItems = [
-    { label: 'Home', to: '/' },
+    { label: 'Home', to: '/#home' },
     { label: 'Explore', to: '/#explore' },
     { label: 'How it works', to: '/#howitworks' },
     { label: 'App', to: '/#app' }
   ] 
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    setUser(null);
+    navigate('/');
+  };
+
+  // Handle scroll to section
+  const handleScrollToSection = (sectionId: string) => {
+    setIsSidebarOpen(false);
+    setIsDropdownOpen(false);
+  
+    const scrollToElement = () => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const topPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const paddingAdjustment = 20; // adjust according to your section padding
+        
+        window.scrollTo({
+          top: topPosition - 70,
+          behavior: 'smooth',
+        });
+      }
+    };
+  
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(scrollToElement, 100);
+    } else {
+      scrollToElement();
+    }
+  };
+  
+
+  // Extract section ID from href
+  const getSectionId = (href: string) => {
+    if (href.includes('#')) {
+      return href.split('#')[1];
+    }
+    return '';
+  };
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return;
+
+      try {
+        const response = await fetch(`${BASE_URL}/api/user/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'ngrok-skip-browser-warning': '444',
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data);
+          console.log(data);
+          
+        }
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
 
   useEffect(() => {
     if (isSidebarOpen) {
@@ -88,39 +163,111 @@ const Navbar: React.FC<NavbarProps> = ({
         {/* Navigation tabs - desktop with underline animation */}
         <div className="hidden md:flex items-center space-x-8">
           {navItems.map((item, index) => (
-            <Link 
+            <button
               key={index}
-              to={item.to} 
+              onClick={() => item.to.includes('#') ? handleScrollToSection(getSectionId(item.to)) : navigate(item.to)}
               className="text-slate-800 font-medium relative group"
             >
               {item.label}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black group-hover:w-full transition-all duration-300"></span>
-            </Link>
+            </button>
           ))}
         </div>
 
-
-        {/* Auth buttons - desktop */}
+        {/* Replace auth buttons with conditional rendering */}
         <div className="hidden md:flex items-center space-x-4">
-            <Link to={'/register'}>
+          {!localStorage.getItem('accessToken') ? (
+            <>
+              <Link to={'/register'}>
                 <button className="px-4 py-2 text-blue-700 hover:bg-gray-50 font-medium border border-blue-700 cursor-pointer rounded-md">
-                    Register
+                  Register
                 </button>
-            </Link>
-            <Link to={'/login'}>
+              </Link>
+              <Link to={'/login'}>
                 <button className="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition duration-300 font-medium cursor-pointer">
-                    Login
-                </button>  
-            </Link>
+                  Login
+                </button>
+              </Link>
+            </>
+          ) : (
+            <div className="relative">
+              <div className="mr-4 flex translate-y-0.5 items-center space-x-2">
+                <IoPersonCircleSharp
+                  className="cursor-pointer text-[3rem] text-slate-300"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                />
+                <div>{user?.username || "authenticating..."}</div>
+              </div>
+
+              {isDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-48 rounded-md bg-gray-800 shadow-lg">
+                  <ul className="py-1">
+                    <li>
+                      <Link
+                        to="/admin"
+                        className="flex items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-700"
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        Dashbooard
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={handleLogout}
+                        className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-200 hover:bg-gray-700"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log Out
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Mobile auth buttons (only visible on mobile) */}
+        {/* Update mobile auth buttons */}
         <div className="md:hidden flex items-center space-x-4">
-        <Link to={'/login'}>
-                <button className="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition duration-300 font-medium cursor-pointer">
-                    Login
-                </button>  
+          {!localStorage.getItem('accessToken') ? (
+            <Link to={'/login'}>
+              <button className="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition duration-300 font-medium cursor-pointer">
+                Login
+              </button>
             </Link>
+          ) : (
+            <div className='relative'>
+            <IoPersonCircleSharp
+              className="cursor-pointer text-[2.5rem] text-slate-300"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            />
+
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 rounded-md bg-gray-800 shadow-lg">
+                <ul className="py-1">
+                  <li>
+                    <Link
+                      to="/admin"
+                      className="flex items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-700"
+                    >
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Dashbooard
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-200 hover:bg-gray-700"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Log Out
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -150,13 +297,13 @@ const Navbar: React.FC<NavbarProps> = ({
           
           <div className="flex flex-col space-y-6">
             {navItems.map((item, index) => (
-              <Link 
+              <button
                 key={index}
-                to={item.to} 
-                className="text-gray-700 font-medium"
+                onClick={() => item.to.includes('#') ? handleScrollToSection(getSectionId(item.to)) : navigate(item.to)}
+                className="text-gray-700 font-medium text-left"
               >
                 {item.label}
-              </Link>
+              </button>
             ))}
           </div>
         </div>

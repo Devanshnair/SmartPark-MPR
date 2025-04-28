@@ -76,7 +76,7 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
           <div className="flex justify-center items-center gap-10 max-[500px]:text-sm">
             <span className="">₹{spot.price}/hr</span>
             <span className="flex justify-center items-center gap-1 text-sm">
-              <Car className="h-5 w-5" /> {spot.availableSlots} available
+              <Car className="h-5 w-5" /> {spot.spots} available
             </span>
           </div>
           <button className="flex justify-center items-center gap-6">
@@ -99,7 +99,7 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
                 ease: "easeInOut"
               }}
             >
-              <ArrowRight className="max-[500px]:size-5 size-6"  onClick={() => navigate(`/parking-spots/${spot.id}`)}/>
+              <ArrowRight className="max-[500px]:size-5 size-6"  onClick={() => navigate(`/parkingprofile/${spot.id}`)}/>
             </motion.div>
           </motion.button>
           </button>
@@ -149,7 +149,7 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between p-4 pt-0">
-        <Button variant="default" className="w-[48%]" onClick={() => navigate(`/parking-spots/${spot.id}`)}>
+        <Button variant="default" className="w-[48%]" onClick={() => navigate(`/parkingprofle/${spot.id}`)}>
           Book Now
         </Button>
         <Button variant="outline" className="w-[48%]">

@@ -8,11 +8,9 @@ import { Map, useApiIsLoaded, AdvancedMarker, InfoWindow, useMap } from "@vis.gl
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, X, ChevronUp, Navigation, MapPin, MapPinIcon as MapPinCheck, ArrowLeft, Car, Star, Clock, ArrowRight } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
-import { PARKING_SPOTS, type ParkingSpot } from "@/data/parking-spots"
 import { Drawer, DrawerContent, DrawerTrigger, DrawerClose } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-// import { useMediaQuery } from "@/hooks/use-media-query"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -22,6 +20,7 @@ import {
   type DirectionsResult,
   DirectionsPanel,
 } from "@/components/custom-directions"
+import { BASE_URL } from "@/App"
 
 const libraries = ["places"] as const
 
@@ -31,25 +30,162 @@ interface Viewport {
   zoom: number
 }
 
-// Enhanced parking spots with coordinates
-const ENHANCED_PARKING_SPOTS = PARKING_SPOTS.map((spot, index) => {
-  // Generate coordinates around Mumbai (19.0760° N, 72.8777° E)
-  // This is just for demo purposes - in a real app, you'd have actual coordinates
-  const baseLatitude = 19.076
-  const baseLongitude = 72.8777
+export interface ParkingSpot {
+  id: string | number;
+  latitude?: number;
+  longitude?: number;
+  distance?: string;
+  time?: string;
+  available_slots?: number;
+  owner?: {
+    id: number;
+    user?: {
+      id: number;
+      username: string;
+      name: string;
+      email: string;
+    };
+    parking_name: string;
+    total_slots: number;
+    hourlyRate: number;
+    dailyRate: number;
+    monthlyRate: number;
+    openingHours: string;
+    description: string;
+    levels: number;
+    address: string;
+    rating: number;
+    image_url: string;
+    availableTypes: string;
+  };
+  name?: string;
+  imageUrl?: string;
+  address?: string;
+  rating?: number;
+  price?: string;
+  availableSlots?: number;
+  availableTypes?: string[];
+  reviews?: number;
+}
 
-  // Create a small offset based on the index to spread markers around
-  const latOffset = (Math.random() - 0.5) * 0.05
-  const lngOffset = (Math.random() - 0.5) * 0.05
-
-  return {
-    ...spot,
-    latitude: baseLatitude + latOffset,
-    longitude: baseLongitude + lngOffset,
+export const PARKING_SPOT: ParkingSpot[] = [
+  {
+    id: "1",
+    latitude: 19.0760 + (Math.random() - 0.5) * 0.05,
+    longitude: 72.8777 + (Math.random() - 0.5) * 0.05,
+    distance: "2.5 km",
+    time: "10 mins",
+    available_slots: 92,
+    owner: {
+      id: 1,
+      parking_name: "Trios Fashion Mall Parking",
+      total_slots: 150,
+      hourlyRate: 50.0,
+      dailyRate: 350.0,
+      monthlyRate: 4000.0,
+      openingHours: "24 hours",
+      description: "Secure parking at Trios Fashion Mall",
+      levels: 3,
+      address: "Hill Road, Bandra West, Mumbai, Maharashtra 400050",
+      rating: 4.2,
+      image_url: "https://cdn11.bigcommerce.com/s-64cbb/product_images/uploaded_images/tgtechnicalservices-246300-parking-garage-safer-blogbanner1.jpg",
+      availableTypes: "Compact, SUV, Bike"
+    }
+  },
+  {
+    id: "2",
+    latitude: 19.0760 + (Math.random() - 0.5) * 0.05,
+    longitude: 72.8777 + (Math.random() - 0.5) * 0.05,
+    distance: "4.0 km",
+    time: "15 mins",
+    available_slots: 1152,
+    owner: {
+      id: 2,
+      parking_name: "Runwal Greens Parking",
+      total_slots: 2000,
+      hourlyRate: 60.0,
+      dailyRate: 450.0,
+      monthlyRate: 5000.0,
+      openingHours: "6 AM - 11 PM",
+      description: "Spacious parking at Runwal Greens with EV charging and security.",
+      levels: 4,
+      address: "GMLR Road, Nahur West, Mumbai, Maharashtra 400078",
+      rating: 4.5,
+      image_url: "https://www.adanirealty.com/-/media/project/realty/blogs/what-is-stilt-parking-meaning-rules-how-it-works.ashx",
+      availableTypes: "Compact, SUV"
+    }
+  },
+  {
+    id: "3",
+    latitude: 19.0760 + (Math.random() - 0.5) * 0.05,
+    longitude: 72.8777 + (Math.random() - 0.5) * 0.05,
+    distance: "3.2 km",
+    time: "12 mins",
+    available_slots: 890,
+    owner: {
+      id: 3,
+      parking_name: "Indiabulls Finance Center Parking",
+      total_slots: 1200,
+      hourlyRate: 70.0,
+      dailyRate: 500.0,
+      monthlyRate: 6000.0,
+      openingHours: "7 AM - 10 PM",
+      description: "Premium parking with valet service available",
+      levels: 5,
+      address: "Senapati Bapat Marg, Lower Parel, Mumbai, Maharashtra 400013",
+      rating: 4.3,
+      image_url: "https://raicdn.nl/cdn-cgi/image/width=3840,quality=75,format=auto,sharpen=1/https://edge.sitecorecloud.io/raiamsterda13f7-raidigitalpdb6c-productionf3f5-ef30/media/project/rai-amsterdam-xmc/intertraffic/intertraffic/news/2022/9/parkingshape1-550-x-300-px.png",
+      availableTypes: "Compact, Bike"
+    }
+  },
+  {
+    id: "4",
+    latitude: 19.0760 + (Math.random() - 0.5) * 0.05,
+    longitude: 72.8777 + (Math.random() - 0.5) * 0.05,
+    distance: "2.8 km",
+    time: "9 mins",
+    available_slots: 553,
+    owner: {
+      id: 4,
+      parking_name: "Kalpataru Avana Parking",
+      total_slots: 800,
+      hourlyRate: 55.0,
+      dailyRate: 400.0,
+      monthlyRate: 4500.0,
+      openingHours: "6 AM - 12 AM",
+      description: "Modern parking facility with 24/7 security",
+      levels: 3,
+      address: "Gen Nagesh Marg, Parel, Mumbai, Maharashtra 400012",
+      rating: 4.1,
+      image_url: "https://www.99acres.com/microsite/articles/files/2018/07/car-parking.jpg",
+      availableTypes: "SUV, Bike"
+    }
+  },
+  {
+    id: "5",
+    latitude: 19.0760 + (Math.random() - 0.5) * 0.05,
+    longitude: 72.8777 + (Math.random() - 0.5) * 0.05,
+    distance: "6.0 km",
+    time: "20 mins",
+    available_slots: 144,
+    owner: {
+      id: 5,
+      parking_name: "MCGM Parking Lot Andheri",
+      total_slots: 200,
+      hourlyRate: 40.0,
+      dailyRate: 300.0,
+      monthlyRate: 3500.0,
+      openingHours: "24 hours",
+      description: "Municipal parking lot with affordable rates",
+      levels: 2,
+      address: "Jay Prakash Road, Andheri West, Mumbai, Maharashtra 400058",
+      rating: 3.9,
+      image_url: "https://raicdn.nl/cdn-cgi/image/width=3840,quality=75,format=auto,sharpen=1/https://edge.sitecorecloud.io/raiamsterda13f7-raidigitalpdb6c-productionf3f5-ef30/media/project/rai-amsterdam-xmc/intertraffic/intertraffic/news/2022/9/parkingshape1-550-x-300-px.png",
+      availableTypes: "Compact"
+    }
   }
-})
+];
 
-// Custom marker component for parking spots
 const ParkingMarker = ({
   spot,
   isSelected,
@@ -80,18 +216,28 @@ const ParkingMarker = ({
   )
 }
 
-// Custom info window content
 const MarkerInfoWindow = ({ spot }: { spot: ParkingSpot }) => {
+  const name = spot.owner?.parking_name || spot.name || "";
+  const hourlyRate = spot.owner?.hourlyRate || spot.price || "";
+  const address = spot.owner?.address || spot.address || "";
+  const availableSlots = spot.available_slots || spot.availableSlots || 0;
+  
   return (
-    <div className="p-2 min-w-[200px]">
-      <h3 className="font-semibold text-sm">{spot.name}</h3>
+    <div className="p-3 min-w-[220px]">
+      <h3 className="font-semibold text-sm">{name}</h3>
       <div className="flex items-center text-xs text-gray-600 mt-1">
         <MapPin className="w-3 h-3 mr-1" />
         <span>{spot.distance}</span>
       </div>
+      <div className="text-xs text-gray-600 mt-1 truncate">
+        {address}
+      </div>
       <div className="flex justify-between items-center mt-2">
-        <span className="font-bold text-sm">₹{spot.price}/hr</span>
-        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">{spot.availableSlots} spots</span>
+        <span className="font-bold text-sm">₹{hourlyRate}/hr</span>
+        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">{availableSlots} spots</span>
+      </div>
+      <div className="mt-1 text-xs text-gray-600">
+        {spot.owner?.openingHours || ""}
       </div>
     </div>
   )
@@ -113,6 +259,7 @@ const MapComponent: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [selectedRouteIndex, setSelectedRouteIndex] = useState(0)
   const [alternativeRoutes, setAlternativeRoutes] = useState<DirectionsResult[]>([])
+  const [fetchError, setFetchError] = useState<string | null>(null)
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
   const mapRef = useRef<google.maps.Map | null>(null)
@@ -122,19 +269,15 @@ const MapComponent: React.FC = () => {
   const isDesktop = window.innerWidth >= 1024 ? true : false
   const map = useMap()
 
-  // Load the Google Maps API with the Places library
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY,
     libraries,
   })
 
-  // Check if the vis.gl map API is ready
   const apiIsLoaded = useApiIsLoaded()
 
-  // Get custom directions service
   const { getDirections, isLoaded: isDirectionsServiceLoaded } = useCustomDirectionsService()
 
-  // Get user's current location
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -151,37 +294,86 @@ const MapComponent: React.FC = () => {
     }
   }, [])
 
-  // Fetch parking spots data using TanStack Query
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const distance = R * c;
+    return distance;
+  };
+
   const { data: parkingSpots, isLoading: isLoadingSpots } = useQuery({
     queryKey: ["parkingSpots", selectedPlace?.place_id],
     queryFn: async () => {
-      // In a real app, we would fetch data from an API based on the selected place
-      // For now, we'll use the dummy data and sort by distance
       if (!selectedPlace) return []
 
-      // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 500))
 
-      // Sort spots by distance (assuming distance is in format "X.X km")
-      return [...ENHANCED_PARKING_SPOTS].sort((a, b) => {
-        const distA = Number.parseFloat(a.distance?.replace(" km", "") || "0")
-        const distB = Number.parseFloat(b.distance?.replace(" km", "") || "0")
-        return distA - distB
-      })
+      try {
+        const lat = selectedPlace.geometry?.location?.lat()
+        const lng = selectedPlace.geometry?.location?.lng()
+
+        const response = await fetch(`${BASE_URL}/reservation/parking-area?lat=${lat}&lng=${lng}`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "ngrok-skip-browser-warning": "true",
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error('No parking spots returned from API')
+        }
+        
+        return data.map(spot => {
+          if (!spot.distance && spot.latitude && spot.longitude && lat && lng) {
+            const distance = calculateDistance(lat, lng, spot.latitude, spot.longitude);
+            const time = Math.round(distance * 3);
+            
+            return {
+              ...spot,
+              distance: `${distance.toFixed(1)} km`,
+              time: `${time} mins`
+            };
+          }
+          return spot;
+        }).sort((a, b) => {
+          const distA = parseFloat((a.distance || "0").replace(" km", ""))
+          const distB = parseFloat((b.distance || "0").replace(" km", ""))
+          return distA - distB
+        });
+      } catch (error) {
+        console.error("Error fetching parking spots:", error)
+        setFetchError(error instanceof Error ? error.message : 'Unknown error')
+        
+        return PARKING_SPOT.sort((a, b) => {
+          const distA = parseFloat((a.distance || "0").replace(" km", ""))
+          const distB = parseFloat((b.distance || "0").replace(" km", ""))
+          return distA - distB
+        })
+      }
     },
     enabled: !!selectedPlace,
   })
 
-  // Function to center map on a specific parking spot
   const centerOnSpot = useCallback(
     (spot: ParkingSpot) => {
       if (map && spot.latitude && spot.longitude) {
         map.panTo({ lat: spot.latitude, lng: spot.longitude })
         map.setZoom(16)
         setSelectedSpot(spot)
-        setOpenInfoWindow(spot.id)
+        setOpenInfoWindow(String(spot.id))
 
-        // Close the drawer on mobile after centering
         if (!isDesktop) {
           setDrawerOpen(false)
         }
@@ -190,15 +382,12 @@ const MapComponent: React.FC = () => {
     [map, isDesktop],
   )
 
-  // Function to get directions to a parking spot with alternative routes
   const handleGetDirections = useCallback(
     async (spot: ParkingSpot) => {
       if (!isDirectionsServiceLoaded || !spot.latitude || !spot.longitude) return
 
-      // Start transition to directions mode
       setIsTransitioning(true)
 
-      // Use search location or user location as origin
       const origin = selectedPlace?.geometry?.location
         ? {
             lat: selectedPlace.geometry.location.lat(),
@@ -215,7 +404,6 @@ const MapComponent: React.FC = () => {
       const destination = { lat: spot.latitude, lng: spot.longitude }
 
       try {
-        // Request directions with alternatives
         const result = await getDirections({
           origin,
           destination,
@@ -224,15 +412,12 @@ const MapComponent: React.FC = () => {
         })
 
         if (result) {
-          // Wait for transition effect
           setTimeout(() => {
             setDirectionsResult(result)
 
-            // Store alternative routes if available
             if (result.routes && result.routes.length > 1) {
               const alternatives: DirectionsResult[] = []
 
-              // Create separate DirectionsResult objects for each route
               result.routes.forEach((route, index) => {
                 const altResult = { ...result, routes: [route] }
                 alternatives.push(altResult)
@@ -250,11 +435,10 @@ const MapComponent: React.FC = () => {
             setMapMode("directions")
             setIsTransitioning(false)
 
-            // Close the drawer on mobile after showing directions
             if (!isDesktop) {
               setDrawerOpen(false)
             }
-          }, 1000) // 1 second transition delay
+          }, 1000)
         } else {
           setIsTransitioning(false)
         }
@@ -266,7 +450,6 @@ const MapComponent: React.FC = () => {
     [getDirections, isDirectionsServiceLoaded, selectedPlace, userLocation, isDesktop],
   )
 
-  // Combined function to handle place selection from Autocomplete
   const handlePlaceChanged = () => {
     const place = autocompleteRef.current?.getPlace()
     if (place) {
@@ -283,13 +466,11 @@ const MapComponent: React.FC = () => {
           zoom: 14,
         })
 
-        // Reset directions when a new place is selected
         setShowDirections(false)
         setDirectionsResult(null)
         setShowDirectionsPanel(false)
         setMapMode("search")
 
-        // Open drawer on mobile/tablet when a place is selected
         if (!isDesktop) {
           setDrawerOpen(true)
         }
@@ -297,7 +478,6 @@ const MapComponent: React.FC = () => {
     }
   }
 
-  // Simulated search functionality
   const handleSearch = async () => {
     if (searchValue.trim()) {
       setLoading(true)
@@ -306,7 +486,6 @@ const MapComponent: React.FC = () => {
     }
   }
 
-  // Clear search and results
   const handleClearSearch = () => {
     setSearchValue("")
     setSelectedPlace(null)
@@ -320,7 +499,6 @@ const MapComponent: React.FC = () => {
     setAlternativeRoutes([])
   }
 
-  // Return to search mode from directions mode
   const handleBackToSearch = () => {
     setIsTransitioning(true)
 
@@ -334,25 +512,19 @@ const MapComponent: React.FC = () => {
     }, 1000)
   }
 
-  // useEffect to check for navigation state and trigger a search if available
   useEffect(() => {
     if (initialLocationState) {
-      // If state is an object with searchQuery property (from Hero.tsx)
       if (typeof initialLocationState === "object" && initialLocationState.searchQuery) {
         setSearchValue(initialLocationState.searchQuery)
 
-        // Wait for Google Maps API to be fully loaded
         if (isLoaded && window.google) {
-          // We need to manually trigger a search since we don't have a proper place object
           setLoading(true)
 
-          // Use geocoding to get place details from the search query
           const geocoder = new window.google.maps.Geocoder()
           geocoder.geocode({ address: initialLocationState.searchQuery }, (results, status) => {
             if (status === "OK" && results && results[0]) {
               const place = results[0]
 
-              // Create a simplified place result
               const placeResult = {
                 formatted_address: initialLocationState.searchQuery,
                 geometry: {
@@ -363,7 +535,6 @@ const MapComponent: React.FC = () => {
 
               setSelectedPlace(placeResult)
 
-              // Set new location based on the geocoded result
               const lat = place.geometry.location.lat()
               const lng = place.geometry.location.lng()
               setNewLocation({
@@ -376,23 +547,19 @@ const MapComponent: React.FC = () => {
           })
         }
       }
-      // If state is a string (direct value)
       else if (typeof initialLocationState === "string") {
         setSearchValue(initialLocationState)
       }
 
-      // Clear the navigation state so that the search won't re-run on refresh
       navigate(location.pathname, { replace: true, state: null })
     }
   }, [initialLocationState, navigate, location.pathname, isLoaded])
 
-  // Ensure that both Google Maps and vis.gl APIs are loaded before rendering
   if (!isLoaded || !apiIsLoaded)
     return <div className="h-screen w-screen flex items-center justify-center">Loading Map...</div>
 
   return (
     <div className="h-screen w-screen relative overflow-hidden">
-      {/* Loading overlay during map transitions */}
       <AnimatePresence>
         {isTransitioning && (
           <motion.div
@@ -416,11 +583,10 @@ const MapComponent: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Map */}
       <Map
         defaultZoom={newLocation ? newLocation.zoom : 12}
         defaultCenter={
-          newLocation ? { lat: newLocation.latitude, lng: newLocation.longitude } : { lat: 19.076, lng: 72.8777 } // Mumbai coordinates as default
+          newLocation ? { lat: newLocation.latitude, lng: newLocation.longitude } : { lat: 19.076, lng: 72.8777 }
         }
         gestureHandling="greedy"
         disableDefaultUI={true}
@@ -430,21 +596,26 @@ const MapComponent: React.FC = () => {
         }}
         mapId={mapMode === "search" ? import.meta.env.VITE_DEFAULT_MAP_ID : import.meta.env.VITE_DEFAULT_MAP_ID}
       >
-        {/* Render parking spot markers in search mode */}
         {mapMode === "search" &&
           parkingSpots?.map((spot) => (
-            <AdvancedMarker key={spot.id} position={{ lat: spot.latitude!, lng: spot.longitude! }} title={spot.name}>
+            <AdvancedMarker 
+              key={spot.id} 
+              position={{ 
+                lat: spot.latitude!, 
+                lng: spot.longitude! 
+              }} 
+              title={spot.owner?.parking_name || spot.name || ""}
+            >
               <ParkingMarker
                 spot={spot}
                 isSelected={selectedSpot?.id === spot.id}
                 onClick={() => {
                   setSelectedSpot(spot)
-                  setOpenInfoWindow(openInfoWindow === spot.id ? null : spot.id)
+                  setOpenInfoWindow(String(spot.id) === openInfoWindow ? null : String(spot.id))
                 }}
               />
 
-              {/* Info window for the marker */}
-              {openInfoWindow === spot.id && (
+              {openInfoWindow === String(spot.id) && (
                 <InfoWindow
                   position={{ lat: spot.latitude!, lng: spot.longitude! }}
                   onCloseClick={() => setOpenInfoWindow(null)}
@@ -455,7 +626,6 @@ const MapComponent: React.FC = () => {
             </AdvancedMarker>
           ))}
 
-        {/* Render directions if available */}
         {mapMode === "directions" && showDirections && alternativeRoutes.length > 0 && (
           <CustomDirectionsRenderer
             directions={alternativeRoutes[selectedRouteIndex]}
@@ -471,10 +641,8 @@ const MapComponent: React.FC = () => {
         )}
       </Map>
 
-      {/* Desktop Layout */}
       {isDesktop ? (
         <div className="absolute top-0 left-0 h-full z-10 flex flex-col">
-          {/* Search Bar */}
           <div className="p-4">
             {isLoaded && (
               <Autocomplete
@@ -521,7 +689,6 @@ const MapComponent: React.FC = () => {
             )}
           </div>
 
-          {/* Back button in directions mode */}
           {mapMode === "directions" && (
             <div className="px-4 mb-2">
               <Button variant="outline" className="flex items-center gap-2" onClick={handleBackToSearch}>
@@ -531,7 +698,6 @@ const MapComponent: React.FC = () => {
             </div>
           )}
 
-          {/* Parking Spots List */}
           {selectedPlace && mapMode === "search" && (
             <div className="bg-white/95 backdrop-blur-sm w-[400px] max-h-[calc(100vh-100px)] overflow-y-auto p-4 m-4 mt-0 rounded-lg shadow-lg">
               <h2 className="text-lg font-semibold mb-4">Nearby Parking Spots</h2>
@@ -545,9 +711,8 @@ const MapComponent: React.FC = () => {
                         duration: 1,
                         repeat: Number.POSITIVE_INFINITY,
                         ease: "linear",
-                      },
-                    }}
-                  />
+                      }}}
+                    />
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -566,7 +731,6 @@ const MapComponent: React.FC = () => {
             </div>
           )}
 
-          {/* Directions Panel with Alternative Routes */}
           {mapMode === "directions" && alternativeRoutes.length > 0 && (
             <div className="bg-white/95 backdrop-blur-sm w-[400px] max-h-[calc(100vh-100px)] overflow-y-auto p-4 m-4 mt-0 rounded-lg shadow-lg">
               <div className="flex justify-between items-center mb-4">
@@ -576,7 +740,6 @@ const MapComponent: React.FC = () => {
                 </Button>
               </div>
 
-              {/* Alternative Routes Tabs */}
               <Tabs
                 defaultValue="0"
                 value={selectedRouteIndex.toString()}
@@ -618,7 +781,6 @@ const MapComponent: React.FC = () => {
           )}
         </div>
       ) : (
-        /* Mobile/Tablet Layout */
         <div className="absolute top-0 left-0 w-full z-10">
           <div className="p-4">
             {isLoaded && (
@@ -650,9 +812,8 @@ const MapComponent: React.FC = () => {
                               duration: 1,
                               repeat: Number.POSITIVE_INFINITY,
                               ease: "linear",
-                            },
-                          }}
-                        />
+                            }}}
+                          />
                       </motion.div>
                     ) : (
                       <Search
@@ -666,7 +827,6 @@ const MapComponent: React.FC = () => {
             )}
           </div>
 
-          {/* Back button in directions mode */}
           {mapMode === "directions" && (
             <div className="px-4 mb-2">
               <Button variant="outline" className="flex items-center gap-2" onClick={handleBackToSearch}>
@@ -676,7 +836,6 @@ const MapComponent: React.FC = () => {
             </div>
           )}
 
-          {/* Mobile Drawer - Fixed to be properly adjustable */}
           {selectedPlace && mapMode === "search" && (
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
               <DrawerTrigger asChild>
@@ -708,9 +867,8 @@ const MapComponent: React.FC = () => {
                             duration: 1,
                             repeat: Number.POSITIVE_INFINITY,
                             ease: "linear",
-                          },
-                        }}
-                      />
+                          }}}
+                        />
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-16">
@@ -731,57 +889,70 @@ const MapComponent: React.FC = () => {
             </Drawer>
           )}
 
-          {/* Mobile Directions Panel with Alternative Routes */}
           {mapMode === "directions" && alternativeRoutes.length > 0 && (
-            <div className="fixed bottom-0 left-0 w-full bg-white shadow-lg rounded-t-xl z-50 max-h-[70vh] overflow-hidden">
-              <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white">
-                <h2 className="text-lg font-semibold">Directions to {selectedSpot?.name}</h2>
-                <Button variant="ghost" size="sm" onClick={handleBackToSearch}>
-                  <X className="w-4 h-4" />
+            <Drawer open={showDirectionsPanel} onOpenChange={setShowDirectionsPanel}>
+              <DrawerTrigger asChild>
+                <Button
+                  variant="secondary"
+                  className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 shadow-lg flex items-center gap-2"
+                >
+                  <span>{showDirectionsPanel ? "Close Directions" : "View Directions"}</span>
+                  <ChevronUp className={cn("w-4 h-4 transition-transform", showDirectionsPanel && "rotate-180")} />
                 </Button>
-              </div>
+              </DrawerTrigger>
+              <DrawerContent>
+                <div className="p-4 max-h-[80vh] overflow-y-auto">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-semibold">Directions to {selectedSpot?.name}</h2>
+                    <DrawerClose asChild>
+                      <Button variant="ghost" size="sm" onClick={handleBackToSearch}>
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </DrawerClose>
+                  </div>
 
-              {/* Alternative Routes Tabs */}
-              <Tabs
-                defaultValue="0"
-                value={selectedRouteIndex.toString()}
-                onValueChange={(value) => setSelectedRouteIndex(Number.parseInt(value))}
-                className="p-4"
-              >
-                <TabsList className="w-full mb-4">
-                  {alternativeRoutes.map((_, index) => {
-                    const route = alternativeRoutes[index].routes[0]
-                    const duration = route.legs[0].duration?.text || ""
-                    return (
-                      <TabsTrigger key={index} value={index.toString()} className="flex-1">
-                        Route {index + 1} ({duration})
-                      </TabsTrigger>
-                    )
-                  })}
-                </TabsList>
+                  <Tabs
+                    defaultValue="0"
+                    value={selectedRouteIndex.toString()}
+                    onValueChange={(value) => setSelectedRouteIndex(Number.parseInt(value))}
+                    className="mb-4"
+                  >
+                    <TabsList className="w-full mb-4">
+                      {alternativeRoutes.map((_, index) => {
+                        const route = alternativeRoutes[index].routes[0]
+                        const duration = route.legs[0].duration?.text || ""
+                        return (
+                          <TabsTrigger key={index} value={index.toString()} className="flex-1">
+                            Route {index + 1} ({duration})
+                          </TabsTrigger>
+                        )
+                      })}
+                    </TabsList>
 
-                <div className="overflow-y-auto max-h-[calc(70vh-120px)]">
-                  {alternativeRoutes.map((route, index) => (
-                    <TabsContent key={index} value={index.toString()}>
-                      <div className="bg-blue-50 p-3 rounded-md mb-4">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">{route.routes[0].summary}</p>
-                            <p className="text-sm text-gray-600">
-                              {route.routes[0].legs[0].distance?.text} · {route.routes[0].legs[0].duration?.text}
-                            </p>
+                    <div className="overflow-y-auto">
+                      {alternativeRoutes.map((route, index) => (
+                        <TabsContent key={index} value={index.toString()}>
+                          <div className="bg-blue-50 p-3 rounded-md mb-4">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <p className="font-medium">{route.routes[0].summary}</p>
+                                <p className="text-sm text-gray-600">
+                                  {route.routes[0].legs[0].distance?.text} · {route.routes[0].legs[0].duration?.text}
+                                </p>
+                              </div>
+                              <Badge variant={index === selectedRouteIndex ? "default" : "outline"}>
+                                {index === selectedRouteIndex ? "Selected" : "Select"}
+                              </Badge>
+                            </div>
                           </div>
-                          <Badge variant={index === selectedRouteIndex ? "default" : "outline"}>
-                            {index === selectedRouteIndex ? "Selected" : "Select"}
-                          </Badge>
-                        </div>
-                      </div>
-                      <DirectionsPanel directions={route} />
-                    </TabsContent>
-                  ))}
+                          <DirectionsPanel directions={route} />
+                        </TabsContent>
+                      ))}
+                    </div>
+                  </Tabs>
                 </div>
-              </Tabs>
-            </div>
+              </DrawerContent>
+            </Drawer>
           )}
         </div>
       )}
@@ -789,7 +960,6 @@ const MapComponent: React.FC = () => {
   )
 }
 
-// Enhanced ParkingSpotCard with additional functionality
 const EnhancedParkingSpotCard = ({
   spot,
   layout,
@@ -805,8 +975,18 @@ const EnhancedParkingSpotCard = ({
 }) => {
   const navigate = useNavigate()
 
-  const truncateAddress = (address: string) => {
-    return address.length > 35 ? address.substring(0, 35) + "..." : address
+  const name = spot.owner?.parking_name || spot.name || "";
+  const address = spot.owner?.address || spot.address || "";
+  const hourlyRate = spot.owner?.hourlyRate || spot.price || "";
+  const rating = spot.owner?.rating || spot.rating || 0;
+  const availableSlots = spot.available_slots || spot.availableSlots || 0;
+  const imageUrl = spot.owner?.image_url || spot.imageUrl || "";
+  const availableTypes = spot.owner?.availableTypes ? 
+    spot.owner.availableTypes.split(", ").filter(Boolean) : 
+    spot.availableTypes || [];
+
+  const truncateAddress = (addr: string) => {
+    return addr.length > 35 ? addr.substring(0, 35) + "..." : addr
   }
 
   if (layout === "horizontal") {
@@ -818,31 +998,26 @@ const EnhancedParkingSpotCard = ({
         )}
       >
         <div className="flex gap-4">
-          {/* Left side - Image */}
           <div className="w-1/4">
             <img
-              src={spot.imageUrl || "/placeholder.svg?height=100&width=100"}
-              alt={spot.name}
+              src={imageUrl || "/placeholder.svg?height=100&width=100"}
+              alt={name}
               className="w-full aspect-square object-cover rounded-lg"
             />
           </div>
 
-          {/* Right side - Details */}
           <div className="w-3/4 flex flex-col gap-1">
-            {/* Vehicle Types */}
-            <div className="flex gap-2 mb-1">
-              {spot.availableTypes?.map((type) => (
+            <div className="flex gap-2 mb-1 flex-wrap">
+              {availableTypes.length > 0 && availableTypes.map((type) => (
                 <span key={type} className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-xs font-medium">
                   {type.charAt(0).toUpperCase() + type.slice(1)}
                 </span>
               ))}
             </div>
 
-            {/* Name */}
-            <h3 className="font-semibold text-gray-900 max-[500px]:text-sm">{spot.name}</h3>
+            <h3 className="font-semibold text-gray-900 max-[500px]:text-sm">{name}</h3>
 
-            {/* Address */}
-            <p className="text-gray-500 text-sm mb-2 max-[500px]:hidden">{truncateAddress(spot.address || "")}</p>
+            <p className="text-gray-500 text-sm mb-2 max-[500px]:hidden">{truncateAddress(address)}</p>
             <div className="flex items-center justify-between max-[500px]:gap-4 gap-8 mb-2 w-fit text-gray-500 max-[500px]:text-sm">
               <div className="flex items-center text-muted-foreground">
                 <MapPin className="w-4 h-4 mr-1" />
@@ -856,25 +1031,23 @@ const EnhancedParkingSpotCard = ({
           </div>
         </div>
 
-        {/* Rating and Reviews */}
         <div className="flex items-center gap-2 pt-3">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-4 h-4 ${i < Math.floor(spot.rating) ? "text-yellow-300 fill-yellow-300" : "text-gray-300"}`}
+                className={`w-4 h-4 ${i < Math.floor(rating) ? "text-yellow-300 fill-yellow-300" : "text-gray-300"}`}
               />
             ))}
           </div>
           <span className="text-sm text-gray-600">({spot.reviews || 0} reviews)</span>
         </div>
 
-        {/* Bottom Row */}
         <div className="flex items-center font-semibold justify-between pt-3 ">
           <div className="flex justify-center items-center gap-10 max-[500px]:text-sm">
-            <span className="">₹{spot.price}/hr</span>
+            <span className="">₹{hourlyRate}/hr</span>
             <span className="flex justify-center items-center gap-1 text-sm">
-              <Car className="h-5 w-5" /> {spot.availableSlots} available
+              <Car className="h-5 w-5" /> {availableSlots} available
             </span>
           </div>
           <div className="flex justify-center items-center gap-3">
@@ -884,7 +1057,7 @@ const EnhancedParkingSpotCard = ({
               className="relative px-1 py-1 max-[500px]:size-8 size-9 bg-blue-700 text-white rounded-full overflow-hidden flex justify-center items-center gap-2 cursor-pointer"
               whileHover="hover"
               initial="initial"
-              onClick={() => navigate(`/parking-spots/${spot.id}`)}
+              onClick={() => navigate(`/parkingprofile/${spot.id}`)}
             >
               <motion.div
                 variants={{
@@ -906,7 +1079,6 @@ const EnhancedParkingSpotCard = ({
     )
   }
 
-  // Vertical Card
   return (
     <Card
       className={cn(
@@ -917,14 +1089,14 @@ const EnhancedParkingSpotCard = ({
       <CardHeader className="p-0">
         <div className="relative w-full h-48">
           <img
-            src={spot.imageUrl || "/placeholder.svg?height=200&width=300"}
-            alt={spot.name}
+            src={imageUrl || "/placeholder.svg?height=200&width=300"}
+            alt={name}
             className="w-full h-full object-cover rounded-t-lg"
           />
         </div>
       </CardHeader>
       <CardContent className="p-4">
-        <CardTitle className="mb-2 text-xl font-bold">{spot.name}</CardTitle>
+        <CardTitle className="mb-2 text-xl font-bold">{name}</CardTitle>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center text-muted-foreground">
             <MapPin className="w-4 h-4 mr-1" />
@@ -937,22 +1109,22 @@ const EnhancedParkingSpotCard = ({
         </div>
         <div className="flex items-center mb-2">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className={`w-4 h-4 ${i < spot.rating ? "text-yellow-400 fill-current" : "text-gray-300"}`} />
+            <Star key={i} className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-current" : "text-gray-300"}`} />
           ))}
-          <span className="ml-1 text-sm text-muted-foreground">({spot.rating})</span>
+          <span className="ml-1 text-sm text-muted-foreground">({rating})</span>
         </div>
         <div className="flex items-center justify-between mb-2">
           <Badge variant="secondary" className="text-lg font-semibold">
-            ₹{spot.price}/hr
+            ₹{hourlyRate}/hr
           </Badge>
           <div className="flex items-center text-muted-foreground">
             <Car className="w-4 h-4 mr-1" />
-            <span className="text-sm">{spot.availableSlots} spots left</span>
+            <span className="text-sm">{availableSlots} spots left</span>
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between p-4 pt-0">
-        <Button variant="default" className="w-[48%]" onClick={() => navigate(`/parking-spots/${spot.id}`)}>
+        <Button variant="default" className="w-[48%]" onClick={() => navigate(`/parkingprofile/${spot.id}`)}>
           Book Now
         </Button>
         <Button variant="outline" className="w-[48%]" onClick={onViewMap}>
