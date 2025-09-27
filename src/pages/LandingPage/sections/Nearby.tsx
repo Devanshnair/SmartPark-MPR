@@ -90,6 +90,10 @@ const Nearby: React.FC = () => {
     }
   }, [apiIsLoaded, userLocation]);
 
+  let jsondata={
+    "name": "<h1>Hello</h1>"
+  }
+
   return (
     <section id="explore" className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
@@ -100,7 +104,11 @@ const Nearby: React.FC = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="max-[500px]:text-2xl text-3xl font-bold mb-4">Explore Nearby Parking</h2>
+          <h2 className="max-[500px]:text-2xl text-3xl font-bold mb-4">
+          </h2>
+          {
+            <p>{jsondata.name}</p>
+          }
           <p className="max-[500px]:text-sm text-base text-gray-600 max-w-3xl mx-auto">
             Find and reserve parking spots in your area with real-time availability and competitive pricing.
           </p>
