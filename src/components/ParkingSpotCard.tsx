@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,12 @@ interface ParkingSpotCardProps {
 
 const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
   const navigate = useNavigate();
+  const fallbackImage = "/Parkingspots/1A.png";
+  const [imgSrc, setImgSrc] = useState<string>(spot.imageUrl || fallbackImage);
+
+  useEffect(() => {
+    setImgSrc(spot.imageUrl || fallbackImage);
+  }, [spot.imageUrl]);
 
   const truncateAddress = (address: string) => {
     return address.length > 35 ? address.substring(0, 35) + "..." : address;
@@ -40,9 +47,17 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
         className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer overflow-hidden p-4"
       >
         <div className="flex gap-4">
-          {/* Left side - Image */}
           <div className="w-1/4">
-            <img src={spot.imageUrl} alt={spot.name} className="w-full aspect-square object-cover rounded-lg" />
+            <img
+              src={imgSrc}
+              alt={spot.name}
+              className="w-full aspect-square object-cover rounded-lg"
+              onError={() => {
+                if (imgSrc !== fallbackImage) {
+                  setImgSrc(fallbackImage);
+                }
+              }}
+            />
           </div>
 
           {/* Right side - Details */}
@@ -127,9 +142,14 @@ const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({ spot, layout }) => {
       <CardHeader className="p-0">
         <div className="relative w-full h-48">
           <img
-            src={spot.imageUrl || "https://placehold.co"}
+            src={imgSrc}
             alt={spot.name}
             className="w-full h-full object-cover rounded-t-lg"
+            onError={() => {
+              if (imgSrc !== fallbackImage) {
+                setImgSrc(fallbackImage);
+              }
+            }}
           />
         </div>
       </CardHeader>

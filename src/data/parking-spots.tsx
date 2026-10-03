@@ -42,7 +42,7 @@ export const PARKING_SPOTS: ParkingSpot[] = [
       dailyRate: 500,
       monthlyRate: 5000,
       rating: 4.2,
-      image_url: "https://cdn11.bigcommerce.com/s-64cbb/product_images/uploaded_images/tgtechnicalservices-246300-parking-garage-safer-blogbanner1.jpg",
+      image_url: "/Parkingspots/1A.png",
       availableTypes: "Compact,SUV,Bike"
     }
   },
@@ -64,7 +64,7 @@ export const PARKING_SPOTS: ParkingSpot[] = [
       dailyRate: 500,
       monthlyRate: 5000,
       rating: 4.0,
-      image_url: "https://www.adanirealty.com/-/media/project/realty/blogs/what-is-stilt-parking-meaning-rules-how-it-works.ashx",
+      image_url: "/Parkingspots/1B.png",
       availableTypes: "Compact,SUV"
     }
   },
@@ -86,7 +86,7 @@ export const PARKING_SPOTS: ParkingSpot[] = [
       dailyRate: 700,
       monthlyRate: 7000,
       rating: 4.3,
-      image_url: "https://raicdn.nl/cdn-cgi/image/width=3840,quality=75,format=auto,sharpen=1/https://edge.sitecorecloud.io/raiamsterda13f7-raidigitalpdb6c-productionf3f5-ef30/media/project/rai-amsterdam-xmc/intertraffic/intertraffic/news/2022/9/parkingshape1-550-x-300-px.png",
+      image_url: "/Parkingspots/1C.png",
       availableTypes: "Compact,Bike"
     }
   }

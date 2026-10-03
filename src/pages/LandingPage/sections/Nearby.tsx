@@ -142,7 +142,7 @@ const Nearby: React.FC = () => {
                         spots: spot.available_slots,
                         price: spot.parking_user.hourlyRate.toString(),
                         rating: spot.parking_user.rating,
-                        imageUrl: spot.parking_user.image_url || 'default-parking-image.jpg',
+                        imageUrl: spot.parking_user.image_url || `/Parkingspots/1${String.fromCharCode(65 + (index % 4))}.png`,
                         availableTypes: spot.parking_user.availableTypes.split(','),
                         time: `${index == 0 ? '7 mins' : index == 1 ? '12 mins' : '14 mins'}` // This could be calculated based on distance
                       }}
