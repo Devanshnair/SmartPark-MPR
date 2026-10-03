@@ -107,14 +107,6 @@ export default function Confirmation() {
     triggerConfetti()
   }, [location.state, navigate])
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
-  }
 
   const formatTime = (timeString: string) => {
     return timeString

@@ -13,7 +13,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Camera, Plus, X, AlertCircle, Check, ImageIcon, ChevronLeft, ChevronRight, Trash2 } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BASE_URL } from "@/App"
 
 // Interface for the API response
@@ -244,7 +243,7 @@ export default function Profile() {
   const [showPhotoGallery, setShowPhotoGallery] = useState(false)
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [hasChanges, setHasChanges] = useState(false)
+  const [, setHasChanges] = useState(false)
 
   const queryClient = useQueryClient()
 
@@ -285,7 +284,7 @@ useEffect(() => {
   useEffect(() => {
     if (formData?.levels) {
       const totalSpots = formData.levels.reduce((sum, level) => sum + level.totalSpots, 0)
-      setFormData(prev => prev ? { ...prev, totalSpots } : null)
+      setFormData(prev => ({ ...prev, totalSpots }))
     }
   }, [formData?.levels])
 

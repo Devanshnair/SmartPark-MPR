@@ -1,7 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaAppStore } from 'react-icons/fa';
-import { IoLogoGooglePlaystore } from 'react-icons/io5';
 
 const DownloadApp: React.FC = () => {
   return (

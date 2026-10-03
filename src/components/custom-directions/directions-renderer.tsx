@@ -15,16 +15,16 @@ interface DirectionsRendererProps {
     }
     markerOptions?: {
       origin?: {
-        icon?: string
-        label?: string
+        icon?: any
+        label?: any
       }
       destination?: {
-        icon?: string
-        label?: string
+        icon?: any
+        label?: any
       }
       waypoints?: {
-        icon?: string
-        label?: string
+        icon?: any
+        label?: any
       }
     }
     suppressMarkers?: boolean
@@ -32,7 +32,7 @@ interface DirectionsRendererProps {
   }
 }
 
-export const CustomDirectionsRenderer: React.FC<DirectionsRendererProps> = ({ directions, options = [] }) => {
+export const CustomDirectionsRenderer: React.FC<DirectionsRendererProps> = ({ directions, options = {} }) => {
   const map = useMap()
   const polylineRef = useRef<google.maps.Polyline | null>(null)
   const [path, setPath] = useState<google.maps.LatLngLiteral[]>([])
@@ -134,36 +134,32 @@ export const CustomDirectionsRenderer: React.FC<DirectionsRendererProps> = ({ di
           {markers.origin && (
             <Marker
               position={markers.origin}
-              options={{
-                icon: options.markerOptions?.origin?.icon || {
-                  path: window.google.maps.SymbolPath.CIRCLE,
-                  scale: 8,
-                  fillColor: "#4285F4",
-                  fillOpacity: 1,
-                  strokeColor: "#ffffff",
-                  strokeWeight: 2,
-                },
-                label: options.markerOptions?.origin?.label || "A",
-                zIndex: 2,
+              icon={options.markerOptions?.origin?.icon || {
+                path: window.google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: "#4285F4",
+                fillOpacity: 1,
+                strokeColor: "#ffffff",
+                strokeWeight: 2,
               }}
+              label={options.markerOptions?.origin?.label || "A"}
+              zIndex={2}
             />
           )}
 
           {markers.destination && (
             <Marker
               position={markers.destination}
-              options={{
-                icon: options.markerOptions?.destination?.icon || {
-                  path: window.google.maps.SymbolPath.CIRCLE,
-                  scale: 8,
-                  fillColor: "#EA4335",
-                  fillOpacity: 1,
-                  strokeColor: "#ffffff",
-                  strokeWeight: 2,
-                },
-                label: options.markerOptions?.destination?.label || "B",
-                zIndex: 2,
+              icon={options.markerOptions?.destination?.icon || {
+                path: window.google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: "#EA4335",
+                fillOpacity: 1,
+                strokeColor: "#ffffff",
+                strokeWeight: 2,
               }}
+              label={options.markerOptions?.destination?.label || "B"}
+              zIndex={2}
             />
           )}
 
@@ -171,18 +167,16 @@ export const CustomDirectionsRenderer: React.FC<DirectionsRendererProps> = ({ di
             <Marker
               key={`waypoint-${index}`}
               position={waypoint}
-              options={{
-                icon: options.markerOptions?.waypoints?.icon || {
-                  path: window.google.maps.SymbolPath.CIRCLE,
-                  scale: 7,
-                  fillColor: "#FBBC04",
-                  fillOpacity: 1,
-                  strokeColor: "#ffffff",
-                  strokeWeight: 2,
-                },
-                label: options.markerOptions?.waypoints?.label || String.fromCharCode(67 + index),
-                zIndex: 2,
+              icon={options.markerOptions?.waypoints?.icon || {
+                path: window.google.maps.SymbolPath.CIRCLE,
+                scale: 7,
+                fillColor: "#FBBC04",
+                fillOpacity: 1,
+                strokeColor: "#ffffff",
+                strokeWeight: 2,
               }}
+              label={options.markerOptions?.waypoints?.label || String.fromCharCode(67 + index)}
+              zIndex={2}
             />
           ))}
         </>

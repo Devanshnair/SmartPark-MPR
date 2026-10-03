@@ -38,6 +38,7 @@ export interface Route {
   overview_polyline: string
   warnings: string[]
   waypoint_order: number[]
+  summary?: string
 }
 
 export interface RouteLeg {

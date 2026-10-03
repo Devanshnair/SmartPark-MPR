@@ -79,8 +79,18 @@ interface FloorData {
   }[]
 }
 
+interface ParkingOverviewData {
+  totalSpots: number
+  occupiedSpots: number
+  reservedSpots: number
+  availableSpots: number
+  floors: FloorData[]
+  rawParkingAreaData?: any
+  rawSlotsData?: any
+}
+
 // Fallback parking space data
-const fallbackParkingData = {
+const fallbackParkingData: ParkingOverviewData = {
   totalSpots: 120,
   occupiedSpots: 78,
   reservedSpots: 15,
@@ -224,7 +234,7 @@ const fetchParkingData = async () => {
       return {
         id: `L${i+1}-${index+1}`,
         status,
-        type: Math.random() > 0.8 ? "handicap" : "standard",
+        type: (Math.random() > 0.8 ? "handicap" : "standard") as "handicap" | "standard",
         vehicle,
         rawSlot: slot
       };
@@ -273,12 +283,9 @@ export default function ParkingSpaceOverview() {
     data: parkingData,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<ParkingOverviewData>({
     queryKey: ["parking-overview"],
     queryFn: fetchParkingData,
-    onError: (err) => {
-      console.error("Error fetching parking data:", err);
-    },
   })
 
   const data = parkingData || fallbackParkingData

@@ -22,7 +22,7 @@ import {
 } from "@/components/custom-directions"
 import { BASE_URL } from "@/App"
 
-const libraries = ["places"] as const
+const libraries: ("places" | "drawing" | "geometry" | "visualization")[] = ["places"]
 
 interface Viewport {
   latitude: number
@@ -268,6 +268,11 @@ const MapComponent: React.FC = () => {
   const initialLocationState = location.state ? location.state : ""
   const isDesktop = window.innerWidth >= 1024 ? true : false
   const map = useMap()
+  useEffect(() => {
+    if (map) {
+      mapRef.current = map
+    }
+  }, [map])
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY,
@@ -521,7 +526,7 @@ const MapComponent: React.FC = () => {
           setLoading(true)
 
           const geocoder = new window.google.maps.Geocoder()
-          geocoder.geocode({ address: initialLocationState.searchQuery }, (results, status) => {
+          geocoder.geocode({ address: initialLocationState.searchQuery }, (results: any, status: any) => {
             if (status === "OK" && results && results[0]) {
               const place = results[0]
 
@@ -591,9 +596,6 @@ const MapComponent: React.FC = () => {
         gestureHandling="greedy"
         disableDefaultUI={true}
         className="h-full w-full"
-        onLoad={(map) => {
-          mapRef.current = map
-        }}
         mapId={mapMode === "search" ? import.meta.env.VITE_DEFAULT_MAP_ID : import.meta.env.VITE_DEFAULT_MAP_ID}
       >
         {mapMode === "search" &&

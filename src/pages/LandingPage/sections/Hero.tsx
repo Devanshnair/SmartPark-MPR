@@ -1,20 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
-import { Loader, Loader2, LoaderCircle, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Banner from '/Banner.png';
 import GetUserLocation from '../../../components/GetUserLocation';
-import type { Library } from '@react-google-maps/api';
 
-const libraries: Library[] = ['places'];
+const libraries: ("places" | "drawing" | "geometry" | "visualization")[] = ['places'];
 
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const headingRef = useRef(null);
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const { isLoaded } = useJsApiLoader({
@@ -76,7 +75,6 @@ const Hero = () => {
       document.body.appendChild(tempSpan);
       
       let lastWordIndex = -1;
-      let currentWidth = 0;
       const headingWidth = heading.offsetWidth;
       
       // Find the last word that fits on the first line
@@ -84,7 +82,6 @@ const Hero = () => {
         tempSpan.textContent = words.slice(0, i + 1).join(' ');
         if (tempSpan.offsetWidth <= headingWidth) {
           lastWordIndex = i;
-          currentWidth = tempSpan.offsetWidth;
         } else {
           break;
         }

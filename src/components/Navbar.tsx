@@ -7,7 +7,8 @@ import { BASE_URL } from '@/App';
 
 interface NavItem {
   label: string;
-  href: string;
+  href?: string;
+  to?: string;
 }
 
 interface NavbarProps {
@@ -26,7 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<{ username?: string; [key: string]: any } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -165,7 +166,10 @@ const Navbar: React.FC<NavbarProps> = ({
           {navItems.map((item, index) => (
             <button
               key={index}
-              onClick={() => item.to.includes('#') ? handleScrollToSection(getSectionId(item.to)) : navigate(item.to)}
+              onClick={() => {
+                const target = item.to || item.href || '';
+                target.includes('#') ? handleScrollToSection(getSectionId(target)) : navigate(target);
+              }}
               className="text-slate-800 font-medium relative group"
             >
               {item.label}
@@ -299,7 +303,10 @@ const Navbar: React.FC<NavbarProps> = ({
             {navItems.map((item, index) => (
               <button
                 key={index}
-                onClick={() => item.to.includes('#') ? handleScrollToSection(getSectionId(item.to)) : navigate(item.to)}
+                onClick={() => {
+                  const target = item.to || item.href || '';
+                  target.includes('#') ? handleScrollToSection(getSectionId(target)) : navigate(target);
+                }}
                 className="text-gray-700 font-medium text-left"
               >
                 {item.label}

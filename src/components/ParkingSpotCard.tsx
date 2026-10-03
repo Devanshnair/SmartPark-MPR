@@ -3,13 +3,26 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin, Clock, Car, ArrowRight, MapPinCheck } from "lucide-react";
-import { ParkingSpot } from "@/data/parking-spots";
 import { motion } from "framer-motion";
 
-
+export interface ParkingSpotCardData {
+  id?: string | number;
+  name: string;
+  address?: string;
+  distance?: string;
+  time?: string;
+  spots?: number;
+  availableSpots?: number;
+  price?: string | number;
+  rating: number;
+  imageUrl?: string;
+  availableTypes?: string[];
+  reviews?: number;
+  viewOnMap?: boolean;
+}
 
 interface ParkingSpotCardProps {
-  spot: ParkingSpot;
+  spot: ParkingSpotCardData;
   layout: "horizontal" | "vertical";
 }
 

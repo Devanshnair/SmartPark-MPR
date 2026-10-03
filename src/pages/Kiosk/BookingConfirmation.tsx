@@ -13,6 +13,11 @@ import { BASE_URL } from "@/App"
 
 interface BookingData {
   booking_id: string
+  id?: string | number
+  spot_id?: string | number
+  start_time?: string
+  end_time?: string
+  amount?: number
   parkingId?: string
   date: string
   startTime: string
@@ -320,7 +325,7 @@ export default function BookingConfirmation() {
                   />
                 ) : (
                   <QRCodeSVG
-                    value={details.booking_id || details.id}
+                    value={String(details.booking_id || details.id)}
                     size={180}
                     level="H"
                   />

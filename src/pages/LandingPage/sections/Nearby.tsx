@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { APIProvider, Map, Marker, InfoWindow, useApiIsLoaded } from '@vis.gl/react-google-maps';
+import { Map, Marker, InfoWindow, useApiIsLoaded } from '@vis.gl/react-google-maps';
 import ParkingSpotCard from '@/components/ParkingSpotCard';
 import { PARKING_SPOTS, ParkingSpot } from '@/data/parking-spots';
 import { Link } from 'react-router-dom';
@@ -100,7 +100,9 @@ const Nearby: React.FC = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="max-[500px]:text-2xl text-3xl font-bold mb-4">Explore Nearby Parking</h2>
+          <h2 className="max-[500px]:text-2xl text-3xl font-bold mb-4">
+            Explore Nearby Parking
+          </h2>
           <p className="max-[500px]:text-sm text-base text-gray-600 max-w-3xl mx-auto">
             Find and reserve parking spots in your area with real-time availability and competitive pricing.
           </p>
@@ -175,9 +177,7 @@ const Nearby: React.FC = () => {
                       <InfoWindow
                         position={userLocation}
                         onCloseClick={handleMarkerClick}
-                        options={{
-                          pixelOffset: new window.google.maps.Size(0, -30),
-                        }}
+                        pixelOffset={[0, -30]}
                       >
                         <div className="p-2">
                           <h2 className="font-semibold mb-2">Your Location</h2>

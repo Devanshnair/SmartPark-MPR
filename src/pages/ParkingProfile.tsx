@@ -481,7 +481,7 @@ export default function ParkingProfile() {
           <div className="mb-8 pl-1">
             <h2 className="text-xl font-semibold mb-3">Available Types</h2>
             <div className="grid grid-cols-2 gap-2">
-              {availableTypes.map((type, index) => (
+              {availableTypes.map((type: string, index: number) => (
                 <div key={index} className="flex items-center">
                   <div className="w-2 h-2 rounded-full bg-blue-700 mr-2"></div>
                   <span className="text-sm">{type} Parking</span>
@@ -716,7 +716,7 @@ export default function ParkingProfile() {
               <CardContent className="p-4">
                 <div className="flex items-start">
                   <div className="w-10 h-10 rounded-full bg-gray-200 mr-3 flex-shrink-0 overflow-hidden">
-                    {review.userAvaar ? (
+                    {review.userAvatar ? (
                       <img
                         src={review.userAvatar || "/placeholder.svg"}
                         alt={review.userName}

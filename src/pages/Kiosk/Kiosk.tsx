@@ -1,9 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { QrCode, CalendarPlus, Car } from "lucide-react";
-import { IoCarOutline, IoQrCodeOutline } from "react-icons/io5";
-import { LuQrCode } from "react-icons/lu";
+import { IoCarOutline } from "react-icons/io5";
 import { MdQrCodeScanner } from "react-icons/md";
 
 const Kiosk: React.FC = () => {

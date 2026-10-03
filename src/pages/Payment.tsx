@@ -44,7 +44,7 @@ export default function Payment() {
   };
   
 
-  const [reservationData, setReservationData] = useState({
+  const [reservationData] = useState({
     ...bookingDetails,
     slot: bookingDetails.slot || Number.parseInt(bookingDetails.spot.split("-")[1]) || 0,
     user: bookingDetails.user || "3",

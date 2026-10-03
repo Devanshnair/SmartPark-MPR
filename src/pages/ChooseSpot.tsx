@@ -66,7 +66,7 @@ export default function ChooseSpot() {
 
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null)
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null)
-  const [parkingData, setParkingData] = useState<ParkingAreaResponse | null>(null)
+  const [, setParkingData] = useState<ParkingAreaResponse | null>(null)
   const [levelData, setLevelData] = useState<LevelData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

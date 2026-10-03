@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FcGoogle } from "react-icons/fc"
 import LoginImg from "/LoginImg.svg"
-import { CiLock, CiMail, CiUser } from "react-icons/ci"
+import { CiLock, CiUser } from "react-icons/ci"
 import { Link } from "react-router-dom"
 import { BASE_URL } from '@/App'
 
