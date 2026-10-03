@@ -93,9 +93,9 @@ export default function Sidebar() {
 
           {/* Logo and name */}
           <Link to="/">
-            <div className="flex-shrink-0 flex justify-center items-end gap-2 font-bold text-xl cursor-pointer">
-              <div className="h-7 -translate-y-1 [filter:sepia(100%)_hue-rotate(190deg)_saturate(800%)]">
-                <img src={Logo || "/placeholder.svg"} alt="logo" className="h-full object-cover" />
+            <div className="flex-shrink-0 flex justify-center items-center gap-2.5 font-bold text-xl cursor-pointer">
+              <div className="size-9 rounded-full bg-white flex items-center justify-center shadow-xs border border-slate-200/70 overflow-hidden">
+                <img src={Logo || "/placeholder.svg"} alt="logo" className="size-8 object-contain" />
               </div>
               <p>Parko</p>
             </div>
@@ -114,9 +114,9 @@ export default function Sidebar() {
       >
         {/* Sidebar Header - Only visible on desktop */}
         <div className="p-6 pt-10 hidden md:block">
-          <Link to={'/'} className="flex-shrink-0 flex justify-start items-center gap-2 font-bold text-xl cursor-pointer">
-            <div className="h-7 -translate-y-1 [filter:sepia(100%)_hue-rotate(190deg)_saturate(800%)]">
-              <img src={Logo || "/placeholder.svg"} alt="logo" className="h-full object-cover" />
+          <Link to={'/'} className="flex-shrink-0 flex justify-start items-center gap-2.5 font-bold text-xl cursor-pointer">
+            <div className="size-9 rounded-full bg-white flex items-center justify-center shadow-xs border border-slate-200/70 overflow-hidden">
+              <img src={Logo || "/placeholder.svg"} alt="logo" className="size-8 object-contain" />
             </div>
             <p>Parko</p>
           </Link>
@@ -124,9 +124,9 @@ export default function Sidebar() {
 
         {/* Mobile Sidebar Header with close button */}
         <div className="p-6 flex justify-between items-center md:hidden">
-          <div className="flex-shrink-0 flex justify-start items-center gap-2 font-bold text-xl cursor-pointer">
-            <div className="h-7 -translate-y-1 [filter:sepia(100%)_hue-rotate(190deg)_saturate(800%)]">
-              <img src={Logo || "/placeholder.svg"} alt="logo" className="h-full object-cover" />
+          <div className="flex-shrink-0 flex justify-start items-center gap-2.5 font-bold text-xl cursor-pointer">
+            <div className="size-9 rounded-full bg-white flex items-center justify-center shadow-xs border border-slate-200/70 overflow-hidden">
+              <img src={Logo || "/placeholder.svg"} alt="logo" className="size-8 object-contain" />
             </div>
             <p>Parko</p>
           </div>

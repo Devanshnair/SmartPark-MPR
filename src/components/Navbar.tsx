@@ -153,12 +153,12 @@ const Navbar: React.FC<NavbarProps> = ({
 
         {/* Logo */}
         <Link to={'/'}>
-        <div className="flex-shrink-0 flex justify-center items-center gap-2 font-bold text-xl cursor-pointer" >
-          <div className='h-7 -translate-y-1 [filter:sepia(100%)_hue-rotate(190deg)_saturate(800%)]'>
-            <img src={Logo} alt={"logo"} className='h-full object-cover ' />
+          <div className="flex-shrink-0 flex justify-center items-center gap-2.5 font-bold text-xl cursor-pointer">
+            <div className="size-9 rounded-full bg-white flex items-center justify-center shadow-xs border border-slate-200/70 overflow-hidden">
+              <img src={Logo} alt="logo" className="size-8 object-contain" />
+            </div>
+            <p className="text-slate-900 tracking-tight">{logo}</p>
           </div>
-          <p>{logo}</p>
-        </div>
         </Link>
 
         {/* Navigation tabs - desktop with underline animation */}
